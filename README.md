@@ -1,126 +1,162 @@
-# 🎯 Skill Finder Agent API
+# 🎯 Skill Finder AI - Full Stack Application
 
-A FastAPI-based web service that uses LangChain and AI agents to automatically discover and categorize job skills for any position by searching LinkedIn and other sources.
+A modern full-stack web application that uses AI agents to automatically discover and categorize job skills for any position by searching LinkedIn and other sources.
 
 ## ✨ Features
 
-- 🤖 **AI-Powered Skill Discovery**: Uses ReAct agent pattern with LangChain
-- 🔍 **Real-time Search**: Integrates with Tavily Search to find current job requirements
-- 📊 **Structured Output**: Returns categorized skills with descriptions
-- 🚀 **FastAPI REST API**: Fast, modern, and easy-to-use API
-- 🐳 **Containerized**: Ready-to-deploy with Docker/Podman
+- 🤖 **AI-Powered Skill Discovery**: Uses LangChain ReAct agent pattern
+- 🔍 **Real-time Search**: Integrates with Tavily Search API
+- 📊 **Structured Results**: Returns categorized skills with detailed descriptions
+- � **Beautiful UI**: Modern Next.js 15 frontend with Tailwind CSS
+- 🚀 **FastAPI Backend**: High-performance REST API
+- 🐳 **Fully Containerized**: Docker/Podman ready with docker-compose
 
-## 🏗️ Architecture
+## 🏗️ Tech Stack
 
-- **LangChain ReAct Agent**: Implements reasoning and acting pattern for intelligent skill discovery
-- **OpenRouter AI**: Uses Qwen 3 235B model for natural language processing
-- **Tavily Search**: Web search API for finding real-time job postings
-- **FastAPI**: High-performance web framework
-- **Pydantic**: Data validation and structured outputs
+### Backend
+- **FastAPI** - Modern Python web framework
+- **LangChain** - AI agent orchestration
+- **OpenRouter** - AI model provider (Qwen 3 235B)
+- **Tavily Search** - Web search API
+- **Pydantic** - Data validation
+- **UV** - Fast Python package manager
 
-## 📋 Prerequisites
+### Frontend
+- **Next.js 15** - React framework with App Router
+- **TypeScript** - Type-safe JavaScript
+- **Tailwind CSS** - Utility-first styling
+- **React Hooks** - Modern state management
+
+## 📁 Project Structure
+
+```
+search_agent/
+├── backend/                  # FastAPI backend
+│   ├── server.py            # Main API server
+│   ├── skill_finder_agent.py # LangChain agent logic
+│   ├── schema.py            # Pydantic models
+│   ├── prompt.py            # ReAct prompt template
+│   ├── pyproject.toml       # Python dependencies
+│   ├── Dockerfile           # Backend container
+│   └── README.md            # Backend docs
+├── frontend/                 # Next.js frontend
+│   ├── app/                 # Next.js app directory
+│   ├── components/          # React components
+│   ├── lib/                 # Utility functions
+│   ├── types/               # TypeScript types
+│   ├── package.json         # Node dependencies
+│   ├── Dockerfile           # Frontend container
+│   └── README.md            # Frontend docs
+├── docker-compose.yml        # Multi-container setup
+└── README.md                # This file
+```
+
+## � Quick Start
+
+### Prerequisites
 
 - Python 3.13+
+- Node.js 22+
 - UV package manager
-- Docker or Podman (for containerization)
+- Docker or Podman (optional)
 - API Keys:
   - [OpenRouter API Key](https://openrouter.ai/)
   - [Tavily API Key](https://tavily.com/)
 
-## 🚀 Quick Start
+### Option 1: Using Docker Compose (Recommended)
 
-### 1. Clone the Repository
-
+1. **Clone the repository**
 ```bash
 git clone <your-repo-url>
 cd search_agent
 ```
 
-### 2. Set Up Environment Variables
-
-Create a `.env` file in the project root:
-
+2. **Set up environment variables**
 ```bash
+# Create .env file in root
+cat > .env << EOF
 OPEN_ROUTER_API_KEY=your_openrouter_api_key_here
 TAVILY_API_KEY=your_tavily_api_key_here
+EOF
 ```
 
-### 3. Install Dependencies
+3. **Start both services**
+```bash
+# Using Docker
+docker-compose up
+
+# Using Podman
+podman-compose up
+```
+
+4. **Access the application**
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:8000
+- API Docs: http://localhost:8000/docs
+
+### Option 2: Manual Setup
+
+#### Backend Setup
 
 ```bash
-# Using UV
+cd backend
+
+# Copy environment template
+cp .env.example .env
+# Edit .env and add your API keys
+
+# Install dependencies
 uv sync
 
-# Or with pip
-pip install -r requirements.txt
-```
-
-### 4. Run Locally
-
-```bash
-# Development mode
+# Run development server
 uv run fastapi dev server.py
 
-# Production mode
-uv run fastapi run server.py
+# Backend will be available at http://localhost:8000
 ```
 
-The API will be available at `http://localhost:8000`
-
-## 🐳 Docker/Podman Deployment
-
-### Build Image
+#### Frontend Setup
 
 ```bash
-# Using Docker
-docker build -t search-agent .
+cd frontend
 
-# Using Podman
-podman build -t search-agent .
+# Install dependencies
+npm install
+
+# Copy environment template
+cp .env.example .env.local
+
+# Run development server
+npm run dev
+
+# Frontend will be available at http://localhost:3000
 ```
 
-### Run Container
+## 🎨 Frontend Features
 
+- **Modern UI**: Clean, responsive design with dark mode support
+- **Real-time Search**: Instant skill discovery with loading states
+- **Skill Cards**: Beautiful card layout with numbered skills
+- **Error Handling**: User-friendly error messages
+- **Animations**: Smooth transitions and loading animations
+
+## 📡 API Endpoints
+
+### Health Check
 ```bash
-# Using Docker
-docker run -d -p 8000:8000 --env-file .env --name search-agent search-agent
-
-# Using Podman
-podman run -d -p 8000:8000 --env-file .env --name search-agent search-agent
+GET http://localhost:8000/
 ```
 
-### Container Management
-
+### Find Skills
 ```bash
-# View logs
-podman logs -f search-agent
+POST http://localhost:8000/skills
+Content-Type: application/json
 
-# Stop container
-podman stop search-agent
-
-# Start container
-podman start search-agent
-
-# Remove container
-podman rm -f search-agent
-```
-
-## 📡 API Usage
-
-### Endpoint
-
-**POST** `/skills`
-
-### Request Body
-
-```json
 {
   "position": "Python Developer"
 }
 ```
 
-### Response
-
+**Response:**
 ```json
 {
   "skills": {
@@ -129,174 +165,157 @@ podman rm -f search-agent
     "skills": [
       {
         "name": "Python Programming",
-        "description": "Proficiency in Python 3.x with knowledge of frameworks like Django or Flask"
-      },
-      {
-        "name": "API Development",
-        "description": "Experience building RESTful APIs and microservices"
-      },
-      {
-        "name": "Database Management",
-        "description": "Knowledge of SQL and NoSQL databases (PostgreSQL, MongoDB)"
+        "description": "Proficiency in Python 3.x..."
       }
     ]
   }
 }
 ```
 
-### Example with cURL
+## 🧪 Testing the Application
 
+1. Start both backend and frontend servers
+2. Open http://localhost:3000 in your browser
+3. Enter a job position (e.g., "Data Scientist")
+4. Click "Find Skills 🔍"
+5. View the AI-generated skill list!
+
+## 🐳 Docker/Podman Commands
+
+### Build Images
 ```bash
-curl -X POST http://localhost:8000/skills \
-  -H "Content-Type: application/json" \
-  -d '{"position": "Data Scientist"}'
+# Build both images
+docker-compose build
+
+# Or individually
+cd backend && docker build -t skill-finder-backend .
+cd frontend && docker build -t skill-finder-frontend .
 ```
 
-### Example with Python
-
-```python
-import requests
-
-response = requests.post(
-    "http://localhost:8000/skills",
-    json={"position": "Full Stack Developer"}
-)
-
-skills = response.json()
-print(skills)
-```
-
-### Example with JavaScript/Node.js
-
-```javascript
-const response = await fetch('http://localhost:8000/skills', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ position: 'DevOps Engineer' })
-});
-
-const skills = await response.json();
-console.log(skills);
-```
-
-## 🏗️ Project Structure
-
-```
-search_agent/
-├── server.py                 # FastAPI application
-├── skill_finder_agent.py     # LangChain agent logic
-├── schema.py                 # Pydantic models
-├── prompt.py                 # ReAct prompt template
-├── pyproject.toml            # Project dependencies
-├── uv.lock                   # Locked dependencies
-├── Dockerfile                # Container configuration
-├── .env                      # Environment variables (create this)
-└── README.md                 # This file
-```
-
-## 🔧 Configuration
-
-### Environment Variables
-
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `OPEN_ROUTER_API_KEY` | API key for OpenRouter AI service | Yes |
-| `TAVILY_API_KEY` | API key for Tavily search service | Yes |
-
-### Model Configuration
-
-The default model is `qwen/qwen3-235b-a22b:free`. You can change it in `skill_finder_agent.py`:
-
-```python
-llm = ChatOpenAI(
-    base_url="https://openrouter.ai/api/v1",
-    model="your-preferred-model",  # Change here
-    api_key=OPEN_ROUTER_API_KEY,
-    temperature=0,
-)
-```
-
-## 🚀 Deployment Options
-
-### 1. Railway
-1. Push code to GitHub
-2. Visit [railway.app](https://railway.app)
-3. New Project → Deploy from GitHub
-4. Add environment variables
-5. Deploy automatically!
-
-### 2. Render
-1. Push code to GitHub
-2. Visit [render.com](https://render.com)
-3. New → Web Service
-4. Connect your repo
-5. Add environment variables
-6. Deploy!
-
-### 3. Fly.io
+### Run Containers
 ```bash
-# Install flyctl
-brew install flyctl
+# Start all services
+docker-compose up -d
 
-# Login
-flyctl auth login
+# View logs
+docker-compose logs -f
 
-# Deploy
-flyctl launch
+# Stop services
+docker-compose down
 ```
 
-### 4. Google Cloud Run / AWS ECS / Azure Container Instances
-Push your Docker image to container registry and deploy using their respective services.
+## 🚀 Deployment
 
-## 🧪 Testing
+### Backend Deployment Options
 
-```bash
-# Run the API
-uv run fastapi dev server.py
+1. **Railway/Render** - One-click deployment
+2. **Fly.io** - Global edge deployment
+3. **AWS/GCP/Azure** - Cloud platforms
+4. **Docker Hub** - Container registry
 
-# In another terminal, test the endpoint
-curl -X POST http://localhost:8000/skills \
-  -H "Content-Type: application/json" \
-  -d '{"position": "Machine Learning Engineer"}'
+### Frontend Deployment Options
+
+1. **Vercel** (Recommended for Next.js)
+   ```bash
+   npm install -g vercel
+   cd frontend
+   vercel
+   ```
+
+2. **Netlify**
+3. **Railway**
+4. **Docker/Podman on any platform**
+
+### Environment Variables for Production
+
+**Backend:**
+```env
+OPEN_ROUTER_API_KEY=your_key
+TAVILY_API_KEY=your_key
+```
+
+**Frontend:**
+```env
+NEXT_PUBLIC_API_URL=https://your-backend-url.com
 ```
 
 ## 🛠️ Development
 
-### Install Development Dependencies
-
+### Backend Development
 ```bash
-uv sync
-```
+cd backend
 
-### Code Formatting
-
-```bash
-# Format with Black
+# Format code
 uv run black .
-
-# Sort imports with isort
 uv run isort .
+
+# Run tests (if available)
+uv run pytest
 ```
 
-## 📝 License
+### Frontend Development
+```bash
+cd frontend
+
+# Format code
+npm run lint
+
+# Build for production
+npm run build
+
+# Start production server
+npm start
+```
+
+## � Configuration
+
+### Backend Configuration
+
+Edit `backend/skill_finder_agent.py` to change:
+- AI model (default: `qwen/qwen3-235b-a22b:free`)
+- Temperature settings
+- Search parameters
+
+### Frontend Configuration
+
+Edit `frontend/lib/api.ts` to change:
+- API URL
+- Request timeout
+- Error handling
+
+## � Contributing
+
+Contributions are welcome! Please follow these steps:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## � License
 
 This project is open source and available under the [MIT License](LICENSE).
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## 📧 Support
-
-For issues and questions, please open an issue on GitHub.
 
 ## 🔗 Links
 
 - [LangChain Documentation](https://python.langchain.com/)
 - [FastAPI Documentation](https://fastapi.tiangolo.com/)
+- [Next.js 15 Documentation](https://nextjs.org/docs)
+- [Tailwind CSS](https://tailwindcss.com/)
 - [OpenRouter](https://openrouter.ai/)
 - [Tavily Search](https://tavily.com/)
 
+## 📧 Support
+
+For issues and questions, please open an issue on GitHub.
+
+## 🎉 Acknowledgments
+
+- Built with LangChain, FastAPI, and Next.js
+- Powered by OpenRouter and Tavily APIs
+- Styled with Tailwind CSS
+
 ---
 
-Made with ❤️ using LangChain, FastAPI, and AI
+Made with ❤️ using AI and modern web technologies
