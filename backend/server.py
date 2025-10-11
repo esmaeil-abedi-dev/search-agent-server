@@ -9,7 +9,7 @@ app = FastAPI(title="Skill Finder API", version="1.0.0")
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:3001"],  # Frontend URLs
+    allow_origins=["http://localhost:3000", "http://localhost:3001", 'https://search-agent-server-five.vercel.app'],  # Frontend URLs
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
