@@ -1,4 +1,6 @@
 import os
+import logging
+from typing import Optional
 
 from dotenv import load_dotenv
 from langchain.agents import AgentExecutor
@@ -7,9 +9,14 @@ from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnableLambda
 from langchain_openai import ChatOpenAI
 from langchain_tavily import TavilySearch
+from openai import RateLimitError
 
 from prompt import REACT_PROMPT
 from schema import AgentResponseForSkills
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 load_dotenv()
 OPEN_ROUTER_API_KEY = os.getenv("OPEN_ROUTER_API_KEY")
@@ -37,11 +44,19 @@ agent_output = RunnableLambda(lambda x: x['output'])
 
 chain = agent_executor | agent_output | structured_llm
 
-def skill_finder(position:str):
-    response = chain.invoke(
-        {
-            'input': f'Give me the list of skills required for {position} position from Linkedin'
-        }
-    )
-
-    return response
+def skill_finder(position: str):
+    try:
+        logger.info(f"Starting skill search for position: {position}")
+        response = chain.invoke(
+            {
+                'input': f'Give me the list of skills required for {position} position from Linkedin'
+            }
+        )
+        logger.info(f"Successfully completed skill search for position: {position}")
+        return response
+    except RateLimitError as e:
+        logger.error(f"Rate limit hit for position {position}: {str(e)}")
+        raise  # Re-raise to be handled by the server
+    except Exception as e:
+        logger.error(f"Unexpected error for position {position}: {str(e)}", exc_info=True)
+        raise  # Re-raise to be handled by the server
